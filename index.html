@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stat</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-size: 15px;
+        }
+        table, th, td {
+  border: 1px solid black;
+
+}
+    </style>
+</head>
+<body>
+    <table id="myTable">
+      <tr>
+        <th>Sr. No.</th>
+        <th>Variable</th>
+        <th>Frequency</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+      </tr>
+    </table>
+  
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="calculate()">Go</button>
+  
+    <script>
+      var rowCount = 1;
+  
+      function addRow() {
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(-1);
+        var rowNumberCell = row.insertCell(0);
+        var variableCell = row.insertCell(1);
+        var frequencyCell = row.insertCell(2);
+        
+        rowCount++;
+        rowNumberCell.innerHTML = rowCount;
+        variableCell.innerHTML = '<input type="text">';
+        frequencyCell.innerHTML = '<input type="text">';
+  
+      }
+
+      function calculate() {
+          var table = document.getElementById("myTable");
+          var rows = table.getElementsByTagName("tr");
+          
+          var variableValues =[];
+          var frequencyValues =[];
+
+          let cf =[0];
+          
+          let n = 0;
+          
+      // Skip the header row (index 0)
+   
+      for (var i = 1; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName("td");
+        frequencyValues.push(parseInt(cells[2].querySelector("input").value));
+        n+= frequencyValues[i-1];
+    
+      }
+        let check = parseInt(n/2) ;
+        let mClass , lowerLimit , height;
+
+      for( var i=1 ; i <rows.length ; i++){
+        var cells = rows[i].getElementsByTagName("td");
+        let rangeString = (cells[1].querySelector("input").value);
+        var numbers = rangeString.split("-");
+        var startNumber = parseInt(numbers[0]);
+        var endNumber = parseInt(numbers[1]);
+        if( check >= startNumber && check< endNumber){
+            mClass = i-1 ;
+            lowerLimit = startNumber ;
+            height = endNumber - startNumber ;
+        }
+        variableValues.push(parseInt((startNumber+endNumber )/ 2));
+      }
+
+      
+
+      let fixi =0;
+      let temp =0 ;
+
+      for(let i=0 ; i<variableValues.length ;i++){
+        fixi += variableValues[i] * frequencyValues[i] ;
+        temp += frequencyValues[i];
+        cf[i] = temp;
+
+
+      }
+
+      let mean = fixi / n ;
+      console.log(mean) 
+
+
+      let median ;
+      median = lowerLimit + (check - cf[mClass-1])*height / frequencyValues[mClass] ;
+      console.log(median)
+
+      let f1 = frequencyValues[mClass] , f0=frequencyValues[mClass-1] , f2 = frequencyValues[mClass+1] ;
+
+      let mode = lowerLimit + (f1-f0)/(2*f1-f0-f2)*30 ;
+
+      console.log(mode);
+
+      let sum2 = 0 ;
+      for(let i=0;i<variableValues.length ;i++){
+        sum += frequencyValues[i] * (variableValues[i]-mean) * (variableValues[i]-mean) ;   
+      }
+
+      let std = Math.sqrt( sum/n); 
+
+
+
+
+    }
+    </script>
+  </body>
+  
+</html>

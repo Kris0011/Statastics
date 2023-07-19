@@ -23,8 +23,8 @@
     }
 
     .box{
-      margin: auto;
-      width: 600px;
+      margin: 20px auto;
+      min-width: 600px;
       /* border: 2px solid black; */
       display: flex;
       flex-direction: column;
@@ -33,6 +33,12 @@
     }
     div{
       margin: 5px;
+    }
+    button{
+      border-radius: 3px;
+      border: 1px solid black;
+      padding: 3px;
+      margin: 3px;
     }
   </style>
 </head>
@@ -54,9 +60,8 @@
     <div>
 
       <button onclick="addRow()">Add Row</button>
-      <button onclick="calculate()">Go</button>
     </div>
-
+    
     <div id="moments">
       <div>
         <label for="aMean">Enter the value of assumed mean</label>
@@ -67,11 +72,19 @@
         <input type="number" id="nMoments" />
       </div>
     </div>
-
+    
     <div>
-
+      
       <p>Group Data ? (If it is not then click on this button)</p>
       <button id="mode" onclick="toggleMode()">Yes</button>
+      <button onclick="calculate()">Go</button> 
+    </div>
+
+    <div>
+      <p id="output1">
+
+      </p>
+      <p id="output2"></p>
     </div>
 
     
@@ -163,13 +176,17 @@
       }
       let mean = fixi / n;
       console.log(mean);
+      document.getElementById('output1').innerHTML =   `Mean : ${mean} <br>` ;
 
       if (currentMode == 0) {
         let median;
         median =
           lowerLimit +
           ((check - cf[mClass - 1]) * height) / frequencyValues[mClass];
+
         console.log(median);
+          document.getElementById('output1').innerHTML +=   ` Median : ${median} <br>` ;
+
 
         let f1 = frequencyValues[mClass],
           f0 = frequencyValues[mClass - 1],
@@ -178,6 +195,8 @@
         let mode = lowerLimit + ((f1 - f0) / (2 * f1 - f0 - f2)) * 30;
 
         console.log(mode);
+        document.getElementById('output1').innerHTML +=   ` Mode : ${mode} <br>` ;
+
       }
 
       let sum2 = 0;
@@ -190,6 +209,7 @@
 
       let std = Math.sqrt(sum2 / n);
       console.log(std);
+      document.getElementById('output1').innerHTML += `Standard Deviation : ${std}`;
 
       // document.getElementById('moments').style.display= "block";
 
@@ -198,14 +218,12 @@
 
       let cMoments = [];
       let rMoments = [];
-      c.cMoments.push()
 
-      for (let number = 2; number <= nMoments; number++) {
+      for (let number = 1; number <= nMoments; number++) {
         let r = 0;
         let c = 0;
 
         for (let i = 0; i < variableValues.length; i++) {
-          console.log(number)
           c +=
             frequencyValues[i] * (Math.pow(variableValues[i] - mean, number));
           r +=
@@ -214,10 +232,18 @@
 
         cMoments.push(c / n);
         rMoments.push(r / n);
-      }
 
-      console.log(cMoments);
-      console.log(rMoments);
+      }
+      document.getElementById('output2').innerHTML += `Central Moments: <br>`;
+    for (let i = 0; i < nMoments; i++) {
+      document.getElementById('output2').innerHTML += `u${i + 1}: ${cMoments[i]} <br>`;
+    }
+
+    // Displaying the Row Moments
+    document.getElementById('output2').innerHTML += `Row Moments: <br>`;
+    for (let i = 0; i < nMoments; i++) {
+      document.getElementById('output2').innerHTML += `u${i + 1}': ${rMoments[i]} <br>`;
+    }
     }
   </script>
 </body>

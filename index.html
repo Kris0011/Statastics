@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stat</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        font-size: 15px;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid black;
-      }
 
-      #moments {
-        /* display: none ; */
-      }
-    </style>
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-size: 15px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+    }
+
+    #moments {
+      /* display: none ; */
+    }
+
+    .box{
+      margin: auto;
+      width: 600px;
+      /* border: 2px solid black; */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    div{
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
     <table id="myTable">
       <tr>
         <th>Sr. No.</th>
@@ -34,13 +51,11 @@
         <td><input type="text" /></td>
       </tr>
     </table>
+    <div>
 
-    <button onclick="addRow()">Add Row</button>
-    <button onclick="calculate()">Go</button>
-    <button onclick="findMoments()">Moments</button>
-
-    <p>Group Data ? (If it is not then click on this button)</p>
-    <button id="mode" onclick="toggleMode()">Yes</button>
+      <button onclick="addRow()">Add Row</button>
+      <button onclick="calculate()">Go</button>
+    </div>
 
     <div id="moments">
       <div>
@@ -53,157 +68,158 @@
       </div>
     </div>
 
-    <script>
-      currentMode = 0; // 0 is group data
+    <div>
 
-      function toggleMode() {
-        if (currentMode == 0) {
-          document.getElementById("mode").innerHTML = "No";
-          currentMode = 1;
-        } else {
-          document.getElementById("mode").innerHTML = "Yes";
-          currentMode = 0;
-        }
+      <p>Group Data ? (If it is not then click on this button)</p>
+      <button id="mode" onclick="toggleMode()">Yes</button>
+    </div>
+
+    
+
+
+  </div>
+
+
+  <script>
+    currentMode = 0; // 0 is group data
+
+    function toggleMode() {
+      if (currentMode == 0) {
+        document.getElementById("mode").innerHTML = "No";
+        currentMode = 1;
+      } else {
+        document.getElementById("mode").innerHTML = "Yes";
+        currentMode = 0;
       }
+    }
 
-      var rowCount = 1;
+    var rowCount = 1;
 
-      function addRow() {
-        var table = document.getElementById("myTable");
-        var row = table.insertRow(-1);
-        var rowNumberCell = row.insertCell(0);
-        var variableCell = row.insertCell(1);
-        var frequencyCell = row.insertCell(2);
+    function addRow() {
+      var table = document.getElementById("myTable");
+      var row = table.insertRow(-1);
+      var rowNumberCell = row.insertCell(0);
+      var variableCell = row.insertCell(1);
+      var frequencyCell = row.insertCell(2);
 
-        rowCount++;
-        rowNumberCell.innerHTML = rowCount;
-        variableCell.innerHTML = '<input type="text">';
-        frequencyCell.innerHTML = '<input type="text">';
+      rowCount++;
+      rowNumberCell.innerHTML = rowCount;
+      variableCell.innerHTML = '<input type="text">';
+      frequencyCell.innerHTML = '<input type="text">';
+    }
+
+    function calculate() {
+      var table = document.getElementById("myTable");
+      var rows = table.getElementsByTagName("tr");
+
+      var variableValues = [];
+      var frequencyValues = [];
+
+      let cf = [0];
+
+      let n = 0;
+
+      // Skip the header row (index 0)
+
+      for (var i = 1; i < rows.length; i++) {
+        var cells = rows[i].getElementsByTagName("td");
+        frequencyValues.push(parseInt(cells[2].querySelector("input").value));
+        n += frequencyValues[i - 1];
       }
+      let check = parseInt(n / 2);
+      let mClass, lowerLimit, height;
 
-      function calculate() {
-        var table = document.getElementById("myTable");
-        var rows = table.getElementsByTagName("tr");
-
-        var variableValues = [];
-        var frequencyValues = [];
-
-        let cf = [0];
-
-        let n = 0;
-
-        // Skip the header row (index 0)
-
+      if (currentMode == 0) {
         for (var i = 1; i < rows.length; i++) {
           var cells = rows[i].getElementsByTagName("td");
-          frequencyValues.push(parseInt(cells[2].querySelector("input").value));
-          n += frequencyValues[i - 1];
-        }
-        let check = parseInt(n / 2);
-        let mClass, lowerLimit, height;
-
-        if (currentMode == 0) {
-          for (var i = 1; i < rows.length; i++) {
-            var cells = rows[i].getElementsByTagName("td");
-            let rangeString = cells[1].querySelector("input").value;
-            var numbers = rangeString.split("-");
-            var startNumber = parseInt(numbers[0]);
-            var endNumber = parseInt(numbers[1]);
-            if (check >= startNumber && check < endNumber) {
-              mClass = i - 1;
-              lowerLimit = startNumber;
-              height = endNumber - startNumber;
-            }
-            variableValues.push(parseInt((startNumber + endNumber) / 2));
+          let rangeString = cells[1].querySelector("input").value;
+          var numbers = rangeString.split("-");
+          var startNumber = parseInt(numbers[0]);
+          var endNumber = parseInt(numbers[1]);
+          if (check >= startNumber && check < endNumber) {
+            mClass = i - 1;
+            lowerLimit = startNumber;
+            height = endNumber - startNumber;
           }
-        } else if (currentMode == 1) {
-          for (var i = 1; i < rows.length; i++) {
-            var cells = rows[i].getElementsByTagName("td");
-            let rangeString = cells[1].querySelector("input").value;
-            variableValues.push(
-              parseInt(cells[1].querySelector("input").value)
-            );
-          }
+          variableValues.push(parseInt((startNumber + endNumber) / 2));
         }
-
-        let fixi = 0;
-        let temp = 0;
-
-        for (let i = 0; i < variableValues.length; i++) {
-          fixi += variableValues[i] * frequencyValues[i];
-          temp += frequencyValues[i];
-          cf[i] = temp;
+      } else if (currentMode == 1) {
+        for (var i = 1; i < rows.length; i++) {
+          var cells = rows[i].getElementsByTagName("td");
+          let rangeString = cells[1].querySelector("input").value;
+          variableValues.push(
+            parseInt(cells[1].querySelector("input").value)
+          );
         }
-        let mean = fixi / n;
-        console.log(mean);
-
-        if (currentMode == 0) {
-          let median;
-          median =
-            lowerLimit +
-            ((check - cf[mClass - 1]) * height) / frequencyValues[mClass];
-          console.log(median);
-
-          let f1 = frequencyValues[mClass],
-            f0 = frequencyValues[mClass - 1],
-            f2 = frequencyValues[mClass + 1];
-
-          let mode = lowerLimit + ((f1 - f0) / (2 * f1 - f0 - f2)) * 30;
-
-          console.log(mode);
-        }
-
-        let sum2 = 0;
-        for (let i = 0; i < variableValues.length; i++) {
-          sum2 +=
-            frequencyValues[i] *
-            (variableValues[i] - mean) *
-            (variableValues[i] - mean);
-        }
-
-        let std = Math.sqrt(sum2 / n);
-        console.log(std);
-
-        // document.getElementById('moments').style.display= "block";
-
-        let nMoments = parseInt(document.getElementById("nMoments").value);
-        let aMean = parseInt(document.getElementById("aMean").value);
-
-        let cMoments = [];
-        let rMoments = [];
-        c.cMoments.push()
-
-        for (let number = 2; number <= nMoments; number++) {
-          let r = 0;
-          let c = 0;
-
-          for (let i = 0; i < variableValues.length; i++) {
-            console.log(number)
-            c +=
-              frequencyValues[i] *( Math.pow(variableValues[i] - mean, number)) ;
-            r +=
-              frequencyValues[i] * Math.pow(variableValues[i] - aMean, number);
-          }
-
-          cMoments.push(c/n);
-          rMoments.push(r/n);
-        }
-
-        console.log(cMoments);
-        console.log(rMoments);
       }
 
-      function power(a, b) {
-        let sum = 1;
-        for (let i = 0; i < b; i++) {
-          sum *= a;
-        }
-        return a;
+      let fixi = 0;
+      let temp = 0;
+
+      for (let i = 0; i < variableValues.length; i++) {
+        fixi += variableValues[i] * frequencyValues[i];
+        temp += frequencyValues[i];
+        cf[i] = temp;
+      }
+      let mean = fixi / n;
+      console.log(mean);
+
+      if (currentMode == 0) {
+        let median;
+        median =
+          lowerLimit +
+          ((check - cf[mClass - 1]) * height) / frequencyValues[mClass];
+        console.log(median);
+
+        let f1 = frequencyValues[mClass],
+          f0 = frequencyValues[mClass - 1],
+          f2 = frequencyValues[mClass + 1];
+
+        let mode = lowerLimit + ((f1 - f0) / (2 * f1 - f0 - f2)) * 30;
+
+        console.log(mode);
       }
 
-      // function findMoments(){
+      let sum2 = 0;
+      for (let i = 0; i < variableValues.length; i++) {
+        sum2 +=
+          frequencyValues[i] *
+          (variableValues[i] - mean) *
+          (variableValues[i] - mean);
+      }
 
-      // }
-    </script>
-  </body>
+      let std = Math.sqrt(sum2 / n);
+      console.log(std);
+
+      // document.getElementById('moments').style.display= "block";
+
+      let nMoments = parseInt(document.getElementById("nMoments").value);
+      let aMean = parseInt(document.getElementById("aMean").value);
+
+      let cMoments = [];
+      let rMoments = [];
+      c.cMoments.push()
+
+      for (let number = 2; number <= nMoments; number++) {
+        let r = 0;
+        let c = 0;
+
+        for (let i = 0; i < variableValues.length; i++) {
+          console.log(number)
+          c +=
+            frequencyValues[i] * (Math.pow(variableValues[i] - mean, number));
+          r +=
+            frequencyValues[i] * Math.pow(variableValues[i] - aMean, number);
+        }
+
+        cMoments.push(c / n);
+        rMoments.push(r / n);
+      }
+
+      console.log(cMoments);
+      console.log(rMoments);
+    }
+  </script>
+</body>
+
 </html>

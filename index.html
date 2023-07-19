@@ -32,8 +32,28 @@
   
     <button onclick="addRow()">Add Row</button>
     <button onclick="calculate()">Go</button>
+
+    <p>Group Data ?  (If it is not then click on this button)</p>
+    <button id="mode" onclick="toggleMode()">Yes</button>
+
   
     <script>
+
+      currentMode = 0; // 0 is group data
+
+      function toggleMode(){
+        if(currentMode==0){
+          document.getElementById('mode').innerHTML= "No";
+          currentMode=1;
+        }
+        else{
+          document.getElementById('mode').innerHTML= "Yes";
+          currentMode=0;
+
+        }
+      }
+
+
       var rowCount = 1;
   
       function addRow() {
@@ -72,19 +92,33 @@
         let check = parseInt(n/2) ;
         let mClass , lowerLimit , height;
 
-      for( var i=1 ; i <rows.length ; i++){
-        var cells = rows[i].getElementsByTagName("td");
-        let rangeString = (cells[1].querySelector("input").value);
-        var numbers = rangeString.split("-");
-        var startNumber = parseInt(numbers[0]);
-        var endNumber = parseInt(numbers[1]);
-        if( check >= startNumber && check< endNumber){
-            mClass = i-1 ;
-            lowerLimit = startNumber ;
-            height = endNumber - startNumber ;
+      if(currentMode == 0){
+          for( var i=1 ; i <rows.length ; i++){
+          var cells = rows[i].getElementsByTagName("td");
+          let rangeString = (cells[1].querySelector("input").value);
+          var numbers = rangeString.split("-");
+          var startNumber = parseInt(numbers[0]);
+          var endNumber = parseInt(numbers[1]);
+          if( check >= startNumber && check< endNumber){
+              mClass = i-1 ;
+              lowerLimit = startNumber ;
+              height = endNumber - startNumber ;
+          }
+          variableValues.push(parseInt((startNumber+endNumber )/ 2));
         }
-        variableValues.push(parseInt((startNumber+endNumber )/ 2));
+
+
+
       }
+      else if(currentMode ==1){
+        for( var i=1 ; i <rows.length ; i++){
+          var cells = rows[i].getElementsByTagName("td");
+          let rangeString = (cells[1].querySelector("input").value);
+          variableValues.push(parseInt(cells[1].querySelector("input").value));
+        }
+      }
+
+      
 
       
 
@@ -99,19 +133,24 @@
 
       }
 
-      let mean = fixi / n ;
-      console.log(mean) 
+      if(currentMode == 0){
+          let mean = fixi / n ;
+        console.log(mean) 
 
 
-      let median ;
-      median = lowerLimit + (check - cf[mClass-1])*height / frequencyValues[mClass] ;
-      console.log(median)
+        let median ;
+        median = lowerLimit + (check - cf[mClass-1])*height / frequencyValues[mClass] ;
+        console.log(median)
 
-      let f1 = frequencyValues[mClass] , f0=frequencyValues[mClass-1] , f2 = frequencyValues[mClass+1] ;
+        let f1 = frequencyValues[mClass] , f0=frequencyValues[mClass-1] , f2 = frequencyValues[mClass+1] ;
 
-      let mode = lowerLimit + (f1-f0)/(2*f1-f0-f2)*30 ;
+        let mode = lowerLimit + (f1-f0)/(2*f1-f0-f2)*30 ;
 
-      console.log(mode);
+        console.log(mode);
+
+      }
+
+      
 
       let sum2 = 0 ;
       for(let i=0;i<variableValues.length ;i++){
